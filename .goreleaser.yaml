@@ -43,6 +43,10 @@ archives:
       - LICENSE
       - README.md
 
+  - id: binary
+    formats: binary
+    name_template: "{{ .Binary }}"
+
 checksum:
   name_template: 'checksums.txt'
   algorithm: sha256
