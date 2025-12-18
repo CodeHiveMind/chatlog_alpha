@@ -41,9 +41,24 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Run GoReleaser (Snapshot)
-        if: "!startsWith(github.ref, 'refs/tags/')"
-        run: goreleaser build --snapshot --clean
+      - name: Run GoReleaser (Main Branch Build)
+        if: github.ref == 'refs/heads/main'
+        run: goreleaser release --snapshot --clean
+
+      - name: Update Latest Release
+        if: github.ref == 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: "Latest Development Build"
+          body: "这是来自 main 分支的最新自动构建版本。仅供开发测试使用。"
+          prerelease: true
+          make_latest: false
+          files: |
+            dist/**/*.exe
+            dist/**/*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Artifacts
         if: "!startsWith(github.ref, 'refs/tags/')"
